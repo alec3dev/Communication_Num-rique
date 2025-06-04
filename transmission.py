@@ -1,7 +1,7 @@
 import numpy as np
 
 def encode_bpsk(bits):
-    return 2 * bits - 1  # BPSK : 1 → +1, 0 → -1
+    return 2 * bits - 1
 
 def channel_noise(signal, snr_db):
     snr = 10 ** (snr_db / 10)
