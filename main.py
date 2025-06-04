@@ -1,26 +1,32 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-from transmission import generate_bits, encode_bpsk, channel_noise, decode_bpsk
+from transmission import encode_bpsk, channel_noise, decode_bpsk
 
-st.title("Chaîne de Transmission Numérique")
+st.title("Chaîne Numérique avec Séquence Binaire Fixe")
 
-# 1. Entrée utilisateur
-nb_bits = st.slider("Nombre de bits à transmettre", 10, 1000, 100)
+# Séquence manuelle (modifiable si besoin)
+bits = np.array([1, 0, 1, 1, 0])
+st.write("Séquence binaire émise :", bits)
+
 snr = st.slider("SNR (dB)", 0, 20, 5)
 
-if st.button("Simuler"):
-    bits = generate_bits(nb_bits)
+if st.button("Simuler la transmission"):
     modulated = encode_bpsk(bits)
     received = channel_noise(modulated, snr)
     decoded = decode_bpsk(received)
 
+    st.write("Signal modulé :", modulated)
+    st.write("Signal reçu :", np.round(received, 2))
+    st.write("Bits décodés :", decoded)
+    
     errors = np.sum(bits != decoded)
-    st.write(f"Bits erronés : {errors} sur {nb_bits}")
+    st.write(f"Erreurs : {errors} / {len(bits)}")
 
     fig, ax = plt.subplots()
-    ax.plot(received[:50], 'o-', label="Signal bruité")
-    ax.set_title("Signal BPSK bruité")
+    ax.plot(received, 'o-', label="Signal bruité")
+    ax.axhline(0, color='gray', linestyle='--')
+    ax.set_title("Signal reçu avec bruit")
     ax.grid(True)
     ax.legend()
     st.pyplot(fig)
